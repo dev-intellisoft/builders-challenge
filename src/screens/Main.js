@@ -1,20 +1,23 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import type {Node} from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
-import GetLocation from '@react-native-community/geolocation';
+import {getAddress, getLocation} from '../core/geo';
+import {getLocalWeather} from '../core/wheather';
 
 const Main: () => Node = () => {
-  GetLocation.setRNConfiguration({
-    enableHighAccuracy: true,
-    timeout: 15000,
-  });
-  GetLocation.getCurrentPosition(
-    data => {
-      console.log(data);
-    },
-    error => console.log(error),
-  );
-
+  // const [location, setLocation] = useState({});
+  const init = () => {
+    getLocation()
+      .then(async location => {
+        const [address] = await getAddress(location);
+        const data = await getLocalWeather(address);
+        // console.log(data);
+      })
+      .catch(err => console.log(err));
+  };
+  useEffect(() => {
+    // init();
+  }, []);
   return (
     <SafeAreaView>
       <View>
